@@ -2,110 +2,83 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputs = {
         minutes: document.getElementById('minutes'),
         hours: document.getElementById('hours'),
-        'day-of-month': document.getElementById('day-of-month'),
+        dayOfMonth: document.getElementById('day-of-month'),
         month: document.getElementById('month'),
-        'day-of-week': document.getElementById('day-of-week'),
+        dayOfWeek: document.getElementById('day-of-week'),
     };
 
     const cronExpressionOutput = document.getElementById('cron-expression');
-    const cronDescriptionOutput = document.getElementById('cron-description');
+    const descriptionList = document.getElementById('description-list');
     const copyButton = document.getElementById('copy-button');
 
-    function updateCronExpression() {
-        const cronParts = [
-            inputs.minutes.value || '*',
-            inputs.hours.value || '*',
-            inputs['day-of-month'].value || '*',
-            inputs.month.value || '*',
-            inputs['day-of-week'].value || '*',
-        ];
-        const cronExpression = cronParts.join(' ');
-        cronExpressionOutput.textContent = cronExpression;
-        cronDescriptionOutput.textContent = getCronDescription(cronParts);
+    const descriptions = {
+        minutes: (val) => `<strong>Minutes:</strong> ${parsePart(val, 'minute', { every: 'Every minute' })}`,
+        hours: (val) => `<strong>Hours:</strong> ${parsePart(val, 'hour', { every: 'Every hour' })}`,
+        dayOfMonth: (val) => `<strong>Day of Month:</strong> ${parsePart(val, 'day of the month', { every: 'Every day' })}`,
+        month: (val) => `<strong>Month:</strong> ${parsePart(val, 'month', { every: 'Every month', names: ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] })}`,
+        dayOfWeek: (val) => `<strong>Day of Week:</strong> ${parsePart(val, 'day of the week', { every: 'Every day of the week', names: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] })}`,
+    };
+
+    function parsePart(val, unit, opts) {
+        if (val === '*') return opts.every;
+        if (val.includes(',')) {
+            const parts = val.split(',');
+            const namedParts = opts.names ? parts.map(p => opts.names[p] || p) : parts;
+            return `At ${unit}s ${namedParts.join(' and ')}`;
+        }
+        if (val.includes('/')) {
+            const [, step] = val.split('/');
+            return `Every ${step} ${unit}s`;
+        }
+        if (val.includes('-')) {
+            const [start, end] = val.split('-');
+            const startName = opts.names ? (opts.names[start] || start) : start;
+            const endName = opts.names ? (opts.names[end] || end) : end;
+            return `From ${unit} ${startName} through ${endName}`;
+        }
+        if (val === 'L' && unit === 'day of the month') return 'On the last day of the month';
+
+        const namedVal = opts.names ? (opts.names[val] || val) : val;
+        return `At ${unit} ${namedVal}`;
     }
 
-    // Add event listeners to text inputs
+    function updateCron() {
+        const cronParts = {
+            minutes: inputs.minutes.value || '*',
+            hours: inputs.hours.value || '*',
+            dayOfMonth: inputs.dayOfMonth.value || '*',
+            month: inputs.month.value || '*',
+            dayOfWeek: inputs.dayOfWeek.value || '*',
+        };
+
+        const expression = Object.values(cronParts).join(' ');
+        cronExpressionOutput.textContent = expression;
+
+        descriptionList.querySelector('[data-part="minutes"]').innerHTML = descriptions.minutes(cronParts.minutes);
+        descriptionList.querySelector('[data-part="hours"]').innerHTML = descriptions.hours(cronParts.hours);
+        descriptionList.querySelector('[data-part="day-of-month"]').innerHTML = descriptions.dayOfMonth(cronParts.dayOfMonth);
+        descriptionList.querySelector('[data-part="month"]').innerHTML = descriptions.month(cronParts.month);
+        descriptionList.querySelector('[data-part="day-of-week"]').innerHTML = descriptions.dayOfWeek(cronParts.dayOfWeek);
+    }
+
     Object.values(inputs).forEach(input => {
-        input.addEventListener('input', updateCronExpression);
+        input.addEventListener('input', updateCron);
     });
 
-    // Add event listeners to option buttons
-    document.querySelectorAll('.button-options button').forEach(button => {
-        button.addEventListener('click', () => {
-            const inputGroup = button.closest('.input-group');
-            const input = inputGroup.querySelector('input[type="text"]');
-            input.value = button.dataset.value;
-            updateCronExpression();
-        });
-    });
-
-    // Copy button functionality
     copyButton.addEventListener('click', () => {
         navigator.clipboard.writeText(cronExpressionOutput.textContent).then(() => {
-            const originalText = copyButton.innerHTML;
-            copyButton.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            const icon = copyButton.querySelector('i');
+            icon.classList.remove('far', 'fa-copy');
+            icon.classList.add('fas', 'fa-check');
+            copyButton.title = "Copied!";
             setTimeout(() => {
-                copyButton.innerHTML = originalText;
+                icon.classList.remove('fas', 'fa-check');
+                icon.classList.add('far', 'fa-copy');
+                copyButton.title = "Copy to clipboard";
             }, 2000);
         });
     });
 
-    // Function to generate human-readable description
-    function getCronDescription(parts) {
-        const [minute, hour, dayOfMonth, month, dayOfWeek] = parts;
-
-        if (parts.every(p => p === '*')) return 'Every minute of every day.';
-
-        let description = 'At ';
-
-        // Time part
-        if (minute === '*' && hour === '*') description += 'every minute of every hour';
-        else if (minute === '0' && hour === '*') description += 'the start of every hour';
-        else if (minute !== '*' && hour === '*') description += `minute ${minute} past every hour`;
-        else if (minute === '*' && hour !== '*') description += `every minute during hour ${hour}`;
-        else description += `${hour.padStart(2, '0')}:${minute.padStart(2, '0')}`;
-
-        // Date part
-        let datePart = '';
-        if (dayOfMonth === '*' && month === '*' && dayOfWeek === '*') {
-            datePart = ' on every day';
-        } else {
-            if (dayOfWeek !== '*' && dayOfWeek !== '?') {
-                 datePart += ` on ${describeDayOfWeek(dayOfWeek)}`;
-            }
-
-            if (dayOfMonth !== '*' && dayOfMonth !== '?') {
-                if(dayOfWeek !== '*' && dayOfWeek !== '?') datePart += ' and';
-                datePart += ` on day-of-month ${describeDayOfMonth(dayOfMonth)}`;
-            }
-
-            if (month !== '*') {
-                 datePart += ` in ${describeMonth(month)}`;
-            }
-        }
-
-        return (description + datePart).trim() + '.';
-    }
-
-    function describeDayOfWeek(val) {
-        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-        if (val === '1-5') return 'Monday through Friday';
-        if (val === '0,6') return 'Saturday and Sunday';
-        return val.split(',').map(d => days[parseInt(d)] || `day ${d}`).join(', ');
-    }
-
-    function describeDayOfMonth(val) {
-        if (val === 'L') return 'the last day of the month';
-        return val;
-    }
-
-    function describeMonth(val) {
-        const months = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        if(val.includes(',')) return val.split(',').map(m => months[parseInt(m)] || `month ${m}`).join(', ');
-        return months[parseInt(val)] || `month ${val}`;
-    }
-
-
-    // Initial call to set the values
-    updateCronExpression();
+    // Initial update
+    updateCron();
 });
