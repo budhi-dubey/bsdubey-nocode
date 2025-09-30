@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cron Expression Generator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Cron Expression Generator</h1>
+        <div class="generator">
+            <div class="input-group">
+                <label for="minutes">Minutes</label>
+                <input type="text" id="minutes" value="*">
+            </div>
+            <div class="input-group">
+                <label for="hours">Hours</label>
+                <input type="text" id="hours" value="*">
+            </div>
+            <div class="input-group">
+                <label for="day-of-month">Day of Month</label>
+                <input type="text" id="day-of-month" value="*">
+            </div>
+            <div class="input-group">
+                <label for="month">Month</label>
+                <input type="text" id="month" value="*">
+            </div>
+            <div class="input-group">
+                <label for="day-of-week">Day of Week</label>
+                <input type="text" id="day-of-week" value="*">
+            </div>
+        </div>
+        <div class="output">
+            <h2>Generated Expression</h2>
+            <code id="cron-expression">* * * * *</code>
+            <p id="cron-description">Every minute</p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

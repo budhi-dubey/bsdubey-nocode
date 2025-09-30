@@ -1,0 +1,98 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #e6e9f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background-color: #f5f7fa;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 12px 12px 24px #c3c8d0, -12px -12px 24px #ffffff;
+}
+
+h1 {
+    text-align: center;
+    color: #4a5a70;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+.generator {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.input-group {
+    background-color: #f5f7fa;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: inset 6px 6px 12px #c3c8d0, inset -6px -6px 12px #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+label {
+    margin-bottom: 15px;
+    color: #6a7a90;
+    font-weight: bold;
+}
+
+input[type="text"] {
+    width: 80px;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    background-color: #f5f7fa;
+    box-shadow: 6px 6px 12px #c3c8d0, -6px -6px 12px #ffffff;
+    text-align: center;
+    font-size: 16px;
+    color: #4a5a70;
+    transition: all 0.3s ease;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    box-shadow: inset 4px 4px 8px #c3c8d0, inset -4px -4px 8px #ffffff;
+}
+
+.output {
+    background-color: #f5f7fa;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 12px 12px 24px #c3c8d0, -12px -12px 24px #ffffff;
+    text-align: center;
+}
+
+h2 {
+    color: #4a5a70;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+#cron-expression {
+    background-color: #e0e5ec;
+    padding: 15px 20px;
+    border-radius: 12px;
+    font-size: 22px;
+    font-family: 'Courier New', Courier, monospace;
+    color: #3d5a80;
+    display: block;
+    margin-bottom: 15px;
+    box-shadow: inset 5px 5px 10px #c3c8d0, inset -5px -5px 10px #ffffff;
+    letter-spacing: 2px;
+}
+
+#cron-description {
+    font-size: 16px;
+    color: #6a7a90;
+    min-height: 24px;
+}
