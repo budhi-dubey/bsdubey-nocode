@@ -5,36 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cron Expression Generator</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div class="container">
         <h1>Cron Expression Generator</h1>
+
         <div class="generator">
+            <!-- Minutes -->
             <div class="input-group">
                 <label for="minutes">Minutes</label>
                 <input type="text" id="minutes" value="*">
+                <div class="button-options">
+                    <button data-value="*">Every Minute</button>
+                    <button data-value="*/5">Every 5</button>
+                    <button data-value="*/15">Every 15</button>
+                    <button data-value="0">On the hour</button>
+                </div>
             </div>
+
+            <!-- Hours -->
             <div class="input-group">
                 <label for="hours">Hours</label>
                 <input type="text" id="hours" value="*">
+                <div class="button-options">
+                    <button data-value="*">Every Hour</button>
+                    <button data-value="*/2">Every 2</button>
+                    <button data-value="*/6">Every 6</button>
+                    <button data-value="9-17">9am-5pm</button>
+                </div>
             </div>
+
+            <!-- Day of Month -->
             <div class="input-group">
                 <label for="day-of-month">Day of Month</label>
                 <input type="text" id="day-of-month" value="*">
+                <div class="button-options">
+                    <button data-value="*">Every Day</button>
+                    <button data-value="1">1st of Month</button>
+                    <button data-value="1,15">1st & 15th</button>
+                    <button data-value="L">Last Day</button>
+                </div>
             </div>
+
+            <!-- Month -->
             <div class="input-group">
                 <label for="month">Month</label>
                 <input type="text" id="month" value="*">
+                <div class="button-options">
+                    <button data-value="*">Every Month</button>
+                    <button data-value="1,4,7,10">Quarterly</button>
+                    <button data-value="6,12">Semi-Annually</button>
+                    <button data-value="1">Jan</button>
+                </div>
             </div>
+
+            <!-- Day of Week -->
             <div class="input-group">
                 <label for="day-of-week">Day of Week</label>
                 <input type="text" id="day-of-week" value="*">
+                <div class="button-options">
+                    <button data-value="*">Every Day</button>
+                    <button data-value="1-5">Weekdays</button>
+                    <button data-value="0,6">Weekends</button>
+                    <button data-value="1">Monday</button>
+                </div>
             </div>
         </div>
+
         <div class="output">
             <h2>Generated Expression</h2>
-            <code id="cron-expression">* * * * *</code>
-            <p id="cron-description">Every minute</p>
+            <div class="expression-container">
+                <code id="cron-expression">* * * * *</code>
+                <button id="copy-button"><i class="far fa-copy"></i> Copy</button>
+            </div>
+            <p id="cron-description">Every minute of every day.</p>
         </div>
     </div>
     <script src="script.js"></script>
